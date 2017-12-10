@@ -28,20 +28,6 @@ function isValid(arr) {
 	return indexA === indexB;
 }
 
-function score(str){
-	var reg1 = new RegExp('{}', 'g');
-
-	var index1 = str.match(reg1);
-	str = str.replace(reg1, '1 ');
-
-	var reg2 = new RegExp('\{d+ \}', 'g');
-
-	var index2 = str.match(reg2);
-	str = str.replace(reg2, '2 ');
-
-	return str;
-};
-
 function getScore(arr){
 	var score = 0;
 	var level = 1;
