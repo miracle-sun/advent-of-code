@@ -14,20 +14,6 @@ function cleanGarbage(str){
 	return str;
 }
 
-function isValid(arr) {
-	var indexA = 0;
-	var indexB = 0;
-	arr.forEach(function(item, i){
-		if(item === arr[0]){
-			indexA += 1;
-		} else {
-			indexB += 1;
-		}
-	})
-
-	return indexA === indexB;
-}
-
 function getScore(arr){
 	var score = 0;
 	var level = 1;
@@ -58,3 +44,19 @@ function collecteGarbage(arr){
 }
 // console.log(getScore(cleanGarbage(bigArray).split(''))); // первая звезда
 console.log(collecteGarbage(cleanGarbage(bigArray).split('')));
+
+
+// helper for check valid parentness bigArray
+function isValid(arr) {
+	var indexA = 0;
+	var indexB = 0;
+	arr.forEach(function(item, i){
+		if(item === arr[0]){
+			indexA += 1;
+		} else {
+			indexB += 1;
+		}
+	})
+
+	return indexA === indexB;
+}
