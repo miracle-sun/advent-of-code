@@ -46,7 +46,7 @@ function collecteGarbage(arr){
 console.log(collecteGarbage(cleanGarbage(bigArray).split('')));
 
 
-// helper for check valid parentness bigArray
+// helper for check valid parentheses bigArray
 function isValid(arr) {
 	var indexA = 0;
 	var indexB = 0;
