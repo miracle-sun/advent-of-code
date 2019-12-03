@@ -28,12 +28,12 @@ const LEFT = 'L';
 const pointX = 0;
 const pointY = 0;
 
-function goByWire(wire) {
+function goByWire(wire, flag) {
 	let steps;
 
 	wire.map((el) => {
 		steps = Number(el.slice(1));
-		goBySteps(steps, el[0]);
+		goBySteps(steps, el[0], flag);
 	})
 }
 
@@ -42,36 +42,36 @@ let startY;
 
 let matrix = {};
 
-function goBySteps(steps, direction) {
+function goBySteps(steps, direction, flag) {
 	if (direction === UP) {
 		for(let i = 1; i <= steps; i++) {
 			startY = startY + 1;
-			checkIsEmpty(startY, startX);
-			matrix[startY +''+ startX] = 1;
+			flag && checkIsEmpty(startY, startX);
+			matrix[startY +'i'+ startX] = 1;
 		}
 	} else if (direction === DOWN) {
 		for(let i = 1; i <= steps; i++) {
 			startY = startY - 1;
-			checkIsEmpty(startY, startX);
-			matrix[startY +''+ startX] = 1;
+			flag && checkIsEmpty(startY, startX);
+			matrix[startY +'i'+ startX] = 1;
 		}
 	} else if (direction === LEFT) {
 		for(let i = 1; i <= steps; i++) {
 			startX = startX - 1;
-			checkIsEmpty(startY, startX);
-			matrix[startY +''+ startX] = 1;
+			flag && checkIsEmpty(startY, startX);
+			matrix[startY +'i'+ startX] = 1;
 		}
 	} else if (direction === RIGHT) {
 		for(let i = 1; i <= steps; i++) {
 			startX = startX + 1;
-			checkIsEmpty(startY, startX);
-			matrix[startY +''+ startX] = 1;
+			flag && checkIsEmpty(startY, startX);
+			matrix[startY +'i'+ startX] = 1;
 		}
 	}
 }
 
 function checkIsEmpty(y,x) {
-	if (matrix[y +''+ x] === 1) {
+	if (matrix[y +'i'+ x] === 1) {
 		findManhattan(y,x);
 	}
 }
@@ -79,26 +79,28 @@ function checkIsEmpty(y,x) {
 const res = [];
 const resB = {};
 function findManhattan(y, x) {
+	let point1 = Math.abs(x - pointX);
+	let point2 = Math.abs(y - pointY);
 
-	let manthattanDistance = Math.abs(x + y);
+	let manthattanDistance = point1 + point2;
 
-	resB[x + '' + y] = manthattanDistance;
+	resB[x + 'i' + y] = manthattanDistance;
 	res.push(manthattanDistance);
 }
 
 
 startX = pointX;
 startY = pointY;
-goByWire(wireA);
+goByWire(wireA, 0);
 
-startX = 0;
-startY = 0;
-goByWire(wireB);
+startX = pointX;
+startY = pointY;
+goByWire(wireB, 1);
 function findMin(arr) {
 	return Math.min(...arr)
 }
 console.log(findMin(res), 'result');
-console.log(resB, 'точки');
+// console.log(resB, 'точки');
 // console.log(resB);
 // console.log(matrix);
 // console.log(res, 'res');
