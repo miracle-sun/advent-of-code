@@ -42,7 +42,7 @@ function star1() {
 		pos1 = Number(bigArray[index+1]);
 		pos2 = Number(bigArray[index+2]);
 
-		console.log(index, 'index');
+		// console.log(index, 'index');
 		newIndex = runInstructions(currentValue, index, pos1, pos2, output);
 		index = newIndex;
 	}
@@ -51,8 +51,9 @@ function star1() {
 
 function runInstructions(currentValue, index, pos1, pos2, output) {
 	if (currentValue === HALT) {
-		console.log(OUTPUTS, 'it was HALT outputs');
-		return index;
+		console.log(OUTPUTS, 'HAAAAALT');
+		debugger;
+		return;
 	} else {
 		// herabora, которую нужно распарсить
 		return herabora(currentValue, index, pos1, pos2, output);
@@ -61,7 +62,7 @@ function runInstructions(currentValue, index, pos1, pos2, output) {
 
 function herabora(value, index, pos1, pos2, op) {
 	let strV = value.toString();
-	console.log(strV, 'strV');
+	// console.log(strV, bigArray[100], bigArray[101]);
 	let strVal, output;
 
 	if (strV.length === 1) { 
@@ -86,25 +87,25 @@ function herabora(value, index, pos1, pos2, op) {
 	let jumpos1, jumpos2;
 
 	if (mode1 === MODE_TYPES.POSITION) {
-		arg1 = Number(bigArray[pos1]);
-		jumpos1 = Number(bigArray[pos1]);
+		arg1 = (bigArray[pos1] !== undefined) ? Number(bigArray[pos1]) : 0;
+		jumpos1 = pos1;
 	} else if (mode1 === MODE_TYPES.RELATIVE) {
-		arg1 = Number(bigArray[pos1 + RELATIVE_BASE]);
+		arg1 = (bigArray[pos1 + RELATIVE_BASE] !== undefined) ? Number(bigArray[pos1 + RELATIVE_BASE]) : 0;
 		jumpos1 = pos1 + RELATIVE_BASE;
 	} else {
 		arg1 = pos1;
-		jumpos1 = pos1;
+		jumpos1 = undefined;
 	}
 
 	if (mode2 === MODE_TYPES.POSITION) {
-		arg2 = Number(bigArray[pos2]);
-		jumpos2 =  Number(bigArray[pos2]);
+		arg2 = (bigArray[pos2] !== undefined) ? Number(bigArray[pos2]) : 0;
+		jumpos2 = pos2;
 	} else if (mode2 === MODE_TYPES.RELATIVE) {
-		arg2 = Number(bigArray[pos2 + RELATIVE_BASE]);
+		arg2 = (bigArray[pos2 + RELATIVE_BASE] !== undefined) ? Number(bigArray[pos2 + RELATIVE_BASE]) : 0;
 		jumpos2 = pos2 + RELATIVE_BASE;
 	} else {
 		arg2 = pos2;
-		jumpos2 = pos2;
+		jumpos2 = undefined;
 	}
 
 	output = op;
@@ -112,11 +113,13 @@ function herabora(value, index, pos1, pos2, op) {
 		output = op + RELATIVE_BASE;
 	}
 
-
 	if (opcode === HALT) {
-		console.log('we have HALT', opcode, value, 'OUTPUTS:', OUTPUTS);
+		console.log("HALT");
+		// console.log('we have HALT', opcode, value, 'OUTPUTS:', OUTPUTS);
+		return;
 	} else if (opcode > 9) {
-		console.log('vlada, you have problem, opcode bigger', opcode);
+		console.log("PRObLEM");
+		// console.log('vlada, you have problem, opcode bigger', opcode);
 	} else {
 		if (digitOpcode === MULTI) {
 			bigArray[output] = arg1 * arg2;
@@ -125,33 +128,24 @@ function herabora(value, index, pos1, pos2, op) {
 			bigArray[output] = arg1 + arg2;
 			return index + 3;
 		} else if (digitOpcode === PUT_INPUT) {
-			if(mode1 === MODE_TYPES.POSITION) {
-				bigArray[pos1] = INPUT;
-			} else if (mode1 === MODE_TYPES.RELATIVE) {
-				bigArray[jumpos1] = INPUT;
-			}else {
-				putInput(pos1);
+			if (jumpos1 === undefined) {
+				console.log('vlada, you have PROBLEM');
 			}
+			bigArray[jumpos1] = INPUT;
 			return index + 1;
 		} else if (digitOpcode === TAKE_OUTPUT) {
-			if(mode1 === MODE_TYPES.POSITION) {
-				OUTPUTS.push(bigArray[pos1]);
-			} else if (mode1 === MODE_TYPES.RELATIVE) {
-				OUTPUTS.push(bigArray[jumpos1]);
-			} else {
-				takeOutput(pos1);
-			}
+			OUTPUTS.push(arg1);
 			return index + 1;
 		} else if (digitOpcode === JUMP_IF_TRUE) {
 			if (arg1 !== 0) {
-				index = jumpos2 - 1;
+				index = arg2 - 1;
 				return index;
 			} else {
 				return index + 2;
 			}
 		} else if (digitOpcode === JUMP_IF_FALSE) {
-			if (arg2 === 0) {
-				index = jumpos2 - 1;
+			if (arg1 === 0) {
+				index = arg2 - 1;
 				return index;
 			} else {
 				return index + 2;
@@ -171,7 +165,7 @@ function herabora(value, index, pos1, pos2, op) {
 			}
 			return index + 3;
 		} else if (digitOpcode === ADJUST) {
-			RELATIVE_BASE = RELATIVE_BASE + pos1;
+			RELATIVE_BASE = RELATIVE_BASE + arg1;
 			return index + 1;
 		}
 	}
@@ -193,7 +187,7 @@ function putInput(pos) {
 
 function takeOutput(pos) {
 	OUTPUTS.push(pos);
-	console.log('обновили отпут:', OUTPUTS);
+	// console.log('обновили отпут:', OUTPUTS);
 }
 
 function putZero(pos) {
