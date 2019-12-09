@@ -83,26 +83,33 @@ function herabora(value, index, pos1, pos2, op) {
 	var digitOpcode = opcode % 10;
 
 	let arg1, arg2;
+	let jumpos1, jumpos2;
+
 	if (mode1 === MODE_TYPES.POSITION) {
-		arg1 = Number(bigArray[pos1]) 
+		arg1 = Number(bigArray[pos1]);
+		jumpos1 = Number(bigArray[pos1]);
 	} else if (mode1 === MODE_TYPES.RELATIVE) {
-		arg1 = pos1 + RELATIVE_BASE;
+		arg1 = Number(bigArray[pos1 + RELATIVE_BASE]);
+		jumpos1 = pos1 + RELATIVE_BASE;
 	} else {
-		arg1 =  pos1;
+		arg1 = pos1;
+		jumpos1 = pos1;
 	}
 
 	if (mode2 === MODE_TYPES.POSITION) {
-		arg2 = Number(bigArray[pos2]) 
+		arg2 = Number(bigArray[pos2]);
+		jumpos2 =  Number(bigArray[pos2]);
 	} else if (mode2 === MODE_TYPES.RELATIVE) {
-		arg2 = pos2 + RELATIVE_BASE;
+		arg2 = Number(bigArray[pos2 + RELATIVE_BASE]);
+		jumpos2 = pos2 + RELATIVE_BASE;
 	} else {
 		arg2 = pos2;
+		jumpos2 = pos2;
 	}
 
+	output = op;
 	if (mode3 === MODE_TYPES.RELATIVE) {
 		output = op + RELATIVE_BASE;
-	} else {
-		output = op;
 	}
 
 
@@ -121,34 +128,30 @@ function herabora(value, index, pos1, pos2, op) {
 			if(mode1 === MODE_TYPES.POSITION) {
 				bigArray[pos1] = INPUT;
 			} else if (mode1 === MODE_TYPES.RELATIVE) {
-				bigArray[pos1 + RELATIVE_BASE] = INPUT;
+				bigArray[jumpos1] = INPUT;
 			}else {
 				putInput(pos1);
 			}
 			return index + 1;
 		} else if (digitOpcode === TAKE_OUTPUT) {
 			if(mode1 === MODE_TYPES.POSITION) {
-				console.log('position mode for takeOutput', pos1);
 				OUTPUTS.push(bigArray[pos1]);
-				console.log('TAKE FOR OUTPUTS', OUTPUTS);
 			} else if (mode1 === MODE_TYPES.RELATIVE) {
-				console.log(RELATIVE_BASE, 'RELATIVE_BASE');
-				OUTPUTS.push(bigArray[pos1 + RELATIVE_BASE]);
-				console.log('TAKE FOR OUTPUTS mode 2', OUTPUTS);
+				OUTPUTS.push(bigArray[jumpos1]);
 			} else {
 				takeOutput(pos1);
 			}
 			return index + 1;
 		} else if (digitOpcode === JUMP_IF_TRUE) {
 			if (arg1 !== 0) {
-				index = arg2 - 1;
+				index = jumpos2 - 1;
 				return index;
 			} else {
 				return index + 2;
 			}
 		} else if (digitOpcode === JUMP_IF_FALSE) {
-			if (arg1 === 0) {
-				index = arg2 - 1;
+			if (arg2 === 0) {
+				index = jumpos2 - 1;
 				return index;
 			} else {
 				return index + 2;
