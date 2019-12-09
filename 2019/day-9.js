@@ -42,6 +42,7 @@ function star1() {
 		pos1 = Number(bigArray[index+1]);
 		pos2 = Number(bigArray[index+2]);
 
+		console.log(index, 'index');
 		newIndex = runInstructions(currentValue, index, pos1, pos2, output);
 		index = newIndex;
 	}
@@ -58,10 +59,10 @@ function runInstructions(currentValue, index, pos1, pos2, output) {
 	}
 }
 
-function herabora(value, index, pos1, pos2, output) {
+function herabora(value, index, pos1, pos2, op) {
 	let strV = value.toString();
 	console.log(strV, 'strV');
-	let strVal;
+	let strVal, output;
 
 	if (strV.length === 1) { 
 		strVal = '000'+ strV;
@@ -77,6 +78,7 @@ function herabora(value, index, pos1, pos2, output) {
 	var opcode = Number(strVal.slice(n-2));
 	var mode1 = Number(strVal.slice(0, n-2)) % 10; // могу пожалеть об этом
 	var mode2 = Number(strVal.slice(0, n-3)) % 10; // могу пожалеть об этом
+	var mode3 = Number(strVal.slice(0, n-4)) % 10;
 
 	var digitOpcode = opcode % 10;
 
@@ -84,17 +86,23 @@ function herabora(value, index, pos1, pos2, output) {
 	if (mode1 === MODE_TYPES.POSITION) {
 		arg1 = Number(bigArray[pos1]) 
 	} else if (mode1 === MODE_TYPES.RELATIVE) {
-		arg1 = RELATIVE_BASE;
+		arg1 = pos1 + RELATIVE_BASE;
 	} else {
-		arg1 = pos1;
+		arg1 =  pos1;
 	}
 
 	if (mode2 === MODE_TYPES.POSITION) {
 		arg2 = Number(bigArray[pos2]) 
 	} else if (mode2 === MODE_TYPES.RELATIVE) {
-		arg2 = RELATIVE_BASE;
+		arg2 = pos2 + RELATIVE_BASE;
 	} else {
 		arg2 = pos2;
+	}
+
+	if (mode3 === MODE_TYPES.RELATIVE) {
+		output = op + RELATIVE_BASE;
+	} else {
+		output = op;
 	}
 
 
@@ -104,11 +112,10 @@ function herabora(value, index, pos1, pos2, output) {
 		console.log('vlada, you have problem, opcode bigger', opcode);
 	} else {
 		if (digitOpcode === MULTI) {
-			bigArray[output] = BigInt(arg1 * arg2);
-			console.log(bigArray[63], "what is here");
+			bigArray[output] = arg1 * arg2;
 			return index + 3;
 		} else if (digitOpcode === ADD) {
-			bigArray[output] = BigInt(arg1 + arg2);
+			bigArray[output] = arg1 + arg2;
 			return index + 3;
 		} else if (digitOpcode === PUT_INPUT) {
 			if(mode1 === MODE_TYPES.POSITION) {
@@ -121,9 +128,11 @@ function herabora(value, index, pos1, pos2, output) {
 			return index + 1;
 		} else if (digitOpcode === TAKE_OUTPUT) {
 			if(mode1 === MODE_TYPES.POSITION) {
+				console.log('position mode for takeOutput', pos1);
 				OUTPUTS.push(bigArray[pos1]);
 				console.log('TAKE FOR OUTPUTS', OUTPUTS);
 			} else if (mode1 === MODE_TYPES.RELATIVE) {
+				console.log(RELATIVE_BASE, 'RELATIVE_BASE');
 				OUTPUTS.push(bigArray[pos1 + RELATIVE_BASE]);
 				console.log('TAKE FOR OUTPUTS mode 2', OUTPUTS);
 			} else {
